@@ -22,5 +22,39 @@
     "experimental_setup": "The effectiveness of Purify++ is evaluated on the MNIST and CIFAR10 datasets. It is tested against black-box attacks (Square Attack, SPSA), gray-box attacks (PGD), and strong adaptive attacks (BPDA+EOT). Performance is measured using standard accuracy and robust accuracy. The method is compared against other adversarial purification methods and adversarial training techniques, using various classifier architectures (LeNet, ResNet, Wide ResNet).",
     "limitations": "The evaluation of the BPDA+EOT attack is performed on a subset of the CIFAR10 test set due to the high computational cost. Some experimental details are deferred to the appendix due to space limitations.",
     "future_research_directions": "The paper suggests further developments in diffusion-based purification methods, building upon the improvements and insights provided by Purify++. It also highlights the insensitivity property of Purify++ to the total diffusion steps as a direction for efficiency improvements."
-  }
+  },
+  "generated_queries": [
+    "Diffusion Purification",
+    "Heun Simulation",
+    "Diffusion Models",
+    "ODE Langevin",
+    "Randomness Control"
+  ],
+  "add_github_urls": [
+    "https://github.com/NVlabs/DiffPure"
+  ],
+  "add_method_texts": [
+    {
+      "arxiv_id": "2408.05900v1",
+      "arxiv_url": "http://arxiv.org/abs/2408.05900v1",
+      "title": "Classifier Guidance Enhances Diffusion-based Adversarial Purification by\n  Preserving Predictive Information",
+      "authors": [
+        "Mingkun Zhang",
+        "Jianing Li",
+        "Wei Chen",
+        "Jiafeng Guo",
+        "Xueqi Cheng"
+      ],
+      "published_date": "2024-08-12T02:48:00Z",
+      "journal": "",
+      "doi": "",
+      "summary": "Adversarial purification is one of the promising approaches to defend neural\nnetworks against adversarial attacks. Recently, methods utilizing diffusion\nprobabilistic models have achieved great success for adversarial purification\nin image classification tasks. However, such methods fall into the dilemma of\nbalancing the needs for noise removal and information preservation. This paper\npoints out that existing adversarial purification methods based on diffusion\nmodels gradually lose sample information during the core denoising process,\ncausing occasional label shift in subsequent classification tasks. As a remedy,\nwe suggest to suppress such information loss by introducing guidance from the\nclassifier confidence. Specifically, we propose Classifier-cOnfidence gUided\nPurification (COUP) algorithm, which purifies adversarial examples while\nkeeping away from the classifier decision boundary. Experimental results show\nthat COUP can achieve better adversarial robustness under strong attack\nmethods.",
+      "github_url": "https://github.com/NVlabs/DiffPure",
+      "main_contributions": "The paper addresses the issue of information loss in diffusion-based adversarial purification methods, which can lead to label shift. It proposes Classifier-cOnfidence gUided Purification (COUP), an algorithm that preserves predictive information during purification by incorporating classifier confidence to guide the denoising process, thus enhancing adversarial robustness.",
+      "methodology": "COUP utilizes score-based diffusion models and introduces classifier confidence as a guidance signal into the reverse-time SDE. This guides the purification process away from decision boundaries by adding a regularization term that improves the confidence score of the downstream classifier. An augmented SDE is also proposed for adaptive attacks to evaluate the defense method rigorously.",
+      "experimental_setup": "The algorithm was evaluated on CIFAR-10 and CIFAR-100 datasets using AutoAttack (including white-box and black-box attacks), BPDA, and EOT. The performance was compared against state-of-the-art adversarial training methods and diffusion-based purification methods like DiffPure, using WideResNet classifiers. Robustness was evaluated under l∞ and l2 threat models.",
+      "limitations": "The method suffers from high computational costs during inference. The optimal values for the purification timestep t* and the guidance weight λ need to be empirically determined, adding to the computational overhead.",
+      "future_research_directions": "Future research directions include exploring methods to reduce the computational cost of COUP and investigating adaptive methods for selecting the optimal timestep t* and guidance weight λ automatically. Also, exploring the generalizability of COUP to other data modalities and tasks beyond image classification is a potential area for future work."
+    }
+  ]
 }
