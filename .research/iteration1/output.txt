@@ -1,0 +1,100 @@
+================================================================================
+PURIFY-C: CONFIDENCE-GUIDED DIFFUSION PURIFICATION
+Experimental Validation Pipeline
+================================================================================
+Using CPU
+
+Loading CIFAR-10 dataset...
+
+Training classifier...
+
+Training diffusion model...
+
+Initializing Purify-C model...
+
+============================================================
+EXPERIMENT 1: Comparative Purification Performance
+============================================================
+Generating adversarial examples...
+Evaluating purification performance...
+Evaluating fixed lambda schedule...
+Evaluating exponential lambda schedule...
+Evaluating polynomial lambda schedule...
+Evaluating sigmoid lambda schedule...
+
+Results Summary:
+--------------------------------------------------------------------------------
+Strategy     Clean Acc  Adv Acc    Purified Acc Conf Imp  
+--------------------------------------------------------------------------------
+fixed        0.306      0.163      0.156        -0.000    
+exponential  0.306      0.163      0.156        -0.000    
+polynomial   0.306      0.163      0.156        -0.000    
+sigmoid      0.306      0.163      0.156        -0.000    
+
+============================================================
+EXPERIMENT 2: Lambda Strategy Ablation Study
+============================================================
+Analyzing exponential strategy...
+Analyzing polynomial strategy...
+Analyzing sigmoid strategy...
+
+Lambda Strategy Analysis:
+--------------------------------------------------
+Exponential:
+  Lambda: 0.7084 ± 0.0495
+  Confidence: 0.1736 ± 0.0359
+Polynomial:
+  Lambda: 0.6844 ± 0.0586
+  Confidence: 0.1735 ± 0.0360
+Sigmoid:
+  Lambda: 0.9609 ± 0.0149
+  Confidence: 0.1735 ± 0.0361
+
+============================================================
+EXPERIMENT 3: Temporal Confidence Analysis
+============================================================
+Performing temporal analysis...
+
+Temporal Analysis Results:
+----------------------------------------
+Initial confidence: 0.1753
+Final confidence: 0.1729
+Confidence improvement: -0.0025
+Average lambda: 0.7087
+
+Generating high-quality PDF plots...
+All high-quality PDF plots saved successfully!
+
+============================================================
+FINAL RESULTS SUMMARY
+============================================================
+
+Overall Performance Metrics:
+--------------------------------------------------
+Fixed:
+  Robustness Improvement: -0.0063
+  Clean Degradation: 0.1500
+  Overall Score: 0.1559
+Exponential:
+  Robustness Improvement: -0.0063
+  Clean Degradation: 0.1500
+  Overall Score: 0.1559
+Polynomial:
+  Robustness Improvement: -0.0063
+  Clean Degradation: 0.1500
+  Overall Score: 0.1558
+Sigmoid:
+  Robustness Improvement: -0.0063
+  Clean Degradation: 0.1500
+  Overall Score: 0.1558
+
+Best performing strategy: Exponential
+Overall score: 0.1559
+
+Research status updated: status_enum set to 'stopped'
+
+================================================================================
+EXPERIMENT COMPLETED SUCCESSFULLY!
+All results saved to .research/iteration1/images/
+Status updated: status_enum = 'stopped'
+================================================================================
