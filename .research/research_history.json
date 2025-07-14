@@ -1,0 +1,26 @@
+{
+  "base_queries": [
+    "diffusion model"
+  ],
+  "base_github_url": "https://github.com/openai/improved-diffusion",
+  "base_method_text": {
+    "arxiv_id": "2310.18762v1",
+    "arxiv_url": "http://arxiv.org/abs/2310.18762v1",
+    "title": "Purify++: Improving Diffusion-Purification with Advanced Diffusion\n  Models and Control of Randomness",
+    "authors": [
+      "Boya Zhang",
+      "Weijian Luo",
+      "Zhihua Zhang"
+    ],
+    "published_date": "2023-10-28T17:18:38Z",
+    "journal": "",
+    "doi": "",
+    "summary": "Adversarial attacks can mislead neural network classifiers. The defense\nagainst adversarial attacks is important for AI safety. Adversarial\npurification is a family of approaches that defend adversarial attacks with\nsuitable pre-processing. Diffusion models have been shown to be effective for\nadversarial purification. Despite their success, many aspects of diffusion\npurification still remain unexplored. In this paper, we investigate and improve\nupon three limiting designs of diffusion purification: the use of an improved\ndiffusion model, advanced numerical simulation techniques, and optimal control\nof randomness. Based on our findings, we propose Purify++, a new diffusion\npurification algorithm that is now the state-of-the-art purification method\nagainst several adversarial attacks. Our work presents a systematic exploration\nof the limits of diffusion purification methods.",
+    "github_url": "https://github.com/openai/improved-diffusion",
+    "main_contributions": "The paper introduces Purify++, a novel adversarial purification algorithm that improves upon existing diffusion purification methods. It addresses limitations in previous approaches by using an improved diffusion model (EDM), advanced numerical simulation techniques (Heun's method), and optimal control of randomness. Purify++ achieves state-of-the-art purification performance against several adversarial attacks.",
+    "methodology": "Purify++ employs a forward-and-reverse diffusion process. It leverages Variance Exploding (VE) diffusion (specifically, the EDM model) for forward diffusion, Heun's method for efficient numerical simulation of the purification SDE, and a controlled combination of ODE and Langevin dynamics to manage randomness in the purification procedure. The strength of randomness is controlled by a mixing coefficient λ.",
+    "experimental_setup": "The effectiveness of Purify++ is evaluated on the MNIST and CIFAR10 datasets. It is tested against black-box attacks (Square Attack, SPSA), gray-box attacks (PGD), and strong adaptive attacks (BPDA+EOT). Performance is measured using standard accuracy and robust accuracy. The method is compared against other adversarial purification methods and adversarial training techniques, using various classifier architectures (LeNet, ResNet, Wide ResNet).",
+    "limitations": "The evaluation of the BPDA+EOT attack is performed on a subset of the CIFAR10 test set due to the high computational cost. Some experimental details are deferred to the appendix due to space limitations.",
+    "future_research_directions": "The paper suggests further developments in diffusion-based purification methods, building upon the improvements and insights provided by Purify++. It also highlights the insensitivity property of Purify++ to the total diffusion steps as a direction for efficiency improvements."
+  }
+}
