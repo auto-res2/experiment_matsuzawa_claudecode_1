@@ -97,14 +97,12 @@
     "Related Work": "Adversarial purification has garnered notable attention in recent years, with diffusion-based methods emerging as a robust approach to defending against adversarial attacks. The Purify++ method, as introduced by Zhang et al. (2023), builds on earlier diffusion purification techniques by employing an advanced Variance Exploding diffusion model and Heun's method[[CITATION_7]] for improved simulation fidelity. Despite these advantages, Purify++ employs a fixed lambda parameter to control randomness during the reverse diffusion process, a limitation that may lead to excessive noise removal and loss of discriminative features. Recent works in classifier-guided purification have attempted to address these issues by using real-time classifier outputs to steer the purification process, but they often lack the robust numerical foundation provided by diffusion models. Purify-C distinguishes itself by combining the strong diffusion-based framework of Purify++ with an adaptive guidance mechanism inspired by classifier feedback. This integration allows the lambda parameter to be adjusted dynamically according to the classifier confidence, thereby reducing the risk of label shift and preserving semantic content in the purified image. Our approach is compared against both fixed and adaptive lambda strategies in a series of experiments, offering insights into the interplay between static and dynamic control mechanisms in adversarial purification. The comparative study helps situate our contribution within the broader literature, highlighting both the benefits and current limitations of adaptive guidance in this context.",
     "Background": "Diffusion models have increasingly become a cornerstone for addressing the challenge of adversarial robustness, providing a systematic method to eliminate adversarial noise while reconstructing image content. In the forward diffusion process, noise is progressively added to the input image, and subsequent reconstruction via the reverse process aims to recover the original image quality. The Variance Exploding diffusion process, particularly as operationalized through the EDM model[[CITATION_8]], has demonstrated effectiveness in this context. A key element in the reconstruction phase is the use of Heun's method, a numerical technique that approximates the solution to the underlying stochastic differential equation (SDE) with high fidelity. In Purify++, the reverse diffusion is governed by an SDE of the form dx = f(x, t) dt + g(t) dW, where f(x, t) and g(t) describe the dynamics of the diffusion process, and dW represents the stochastic noise component. However, this formulation utilizes a fixed lambda parameter to mediate the effect of randomness, which can inadvertently lead to the removal of essential predictive information, particularly when classifier confidence is low. The concept of classifier confidence, computed as the softmax probability of the predicted class, and its gradient, grad(log C(x, t)), offer an efficient guidance signal that can be integrated into the diffusion process. By augmenting the SDE to include a classifier-guided term, expressed as dx = f(x, t) dt + g(t) dW + lambda(t, x) * grad(log C(x, t)) dt, it becomes possible to dynamically balance the trade-off between effective noise removal and the preservation of discriminative features. This background lays the foundation for Purify-C by explaining how adaptive guidance based on classifier confidence can be used to modulate the purification process, addressing inherent limitations of fixed-parameter methods.",
     "Method": "Purify-C builds directly on the diffusion purification groundwork laid by Purify++ and introduces a dynamic, classifier-guided mechanism into the reverse diffusion process. The method comprises three main components. First, the diffusion backbone is maintained by using an advanced Variance Exploding diffusion model (EDM)[[CITATION_10]] along with Heun's method[[CITATION_11]] for numerical simulation of the reverse SDE. In this framework, the forward diffusion process systematically adds noise to the input, and the reverse process aims at reconstructing the signal while eliminating adversarial perturbations. Second, adaptive confidence guidance is introduced by augmenting the SDE with a term that leverages classifier confidence. Specifically, during the reverse diffusion the equation is modified to: dx = f(x, t) dt + g(t) dW + lambda(t, x) * grad(log C(x, t)) dt, where grad(log C(x, t)) is derived from the classifier's output and represents the gradient of the log probability of the predicted class. This term effectively pulls the sample away from decision boundaries when classifier confidence is low. Third, a dynamic reweighting strategy is implemented to modulate lambda over time. At each diffusion step, the classifier's softmax confidence is computed, and lambda is updated according to a predefined schedule. For example, one effective mapping is lambda(t, x) = lambda0 * exp(–alpha * C(x, t)), where lambda0 and alpha are hyperparameters that control the sensitivity of this adjustment. This reweighting enables the method to adapt to per-sample and per-timestep variations, ensuring that the purification continues to suppress adversarial noise without sacrificing crucial task-relevant features. Overall, by integrating an adaptive classifier feedback mechanism into the robust diffusion purification framework, Purify-C effectively addresses the key challenges of information loss and label shift, offering a more nuanced balancing act between noise removal and feature preservation.",
-    "Experimental Setup": "The evaluation framework for Purify-C is designed to comprehensively assess its performance under various adversarial settings and to analyze the impact of different lambda scheduling strategies. Experiments are conducted using the MNIST and CIFAR-10 datasets[[CITATION_12]] (note: these datasets were already referenced in the Abstract) leveraging a range of adversarial attacks such as FGSM[[CITATION_13]], PGD[[CITATION_14]], and stronger adaptive attacks like BPDA+EOT[[CITATION_15]]. The experimental protocol is divided into three main parts. The first part involves a Comparative Purification Performance evaluation, where Purify-C is directly compared against the baseline Purify++ approach across several lambda scheduling strategies: fixed, exponential, polynomial, and sigmoid. Key metrics recorded include clean accuracy, adversarial accuracy (prior to purification), purified accuracy, robustness improvement, and clean degradation. The second experiment is a Lambda Strategy Ablation Study, which scrutinizes the statistical performance of different lambda mapping functions. In this study, average lambda values, their variances, and corresponding classifier confidence metrics are recorded for the exponential, polynomial, and sigmoid strategies. The third part of the experimental setup is a Temporal Confidence Analysis, where the evolution of classifier confidence and lambda values is tracked over the reverse diffusion process. The implementation is carried out in PyTorch[[CITATION_16]] and employs standard adversarial attack libraries alongside modules for diffusion simulation. All hyperparameters, including lambda0, the steepness parameter alpha, and the number of diffusion steps, are chosen following standard configurations in the literature. Detailed logging and plotting mechanisms are utilized to capture the dynamics of the purification process, and all relevant figures are generated for thorough analysis.",
+    "Experimental Setup": "The evaluation framework for Purify-C is designed to comprehensively assess its performance under various adversarial settings and to analyze the impact of different lambda scheduling strategies. Experiments are conducted using the MNIST and CIFAR-10 datasets[[CITATION_12]] leveraging a range of adversarial attacks such as FGSM[[CITATION_13]], PGD[[CITATION_14]], and stronger adaptive attacks like BPDA+EOT[[CITATION_15]]. The experimental protocol is divided into three main parts. The first part involves a Comparative Purification Performance evaluation, where Purify-C is directly compared against the baseline Purify++ approach across several lambda scheduling strategies: fixed, exponential, polynomial, and sigmoid. Key metrics recorded include clean accuracy, adversarial accuracy (prior to purification), purified accuracy, robustness improvement, and clean degradation. The second experiment is a Lambda Strategy Ablation Study, which scrutinizes the statistical performance of different lambda mapping functions. In this study, average lambda values, their variances, and corresponding classifier confidence metrics are recorded for the exponential, polynomial, and sigmoid strategies. The third part of the experimental setup is a Temporal Confidence Analysis, where the evolution of classifier confidence and lambda values is tracked over the reverse diffusion process. The implementation is carried out in PyTorch[[CITATION_16]] and employs standard adversarial attack libraries alongside modules for diffusion simulation. All hyperparameters, including lambda0, the steepness parameter alpha, and the number of diffusion steps, are chosen following standard configurations in the literature. Detailed logging and plotting mechanisms are utilized to capture the dynamics of the purification process, and all relevant figures are generated for thorough analysis.",
     "Results": "The experimental evaluation of Purify-C is presented through three distinct experiments. In Experiment 1, Comparative Purification Performance was assessed by generating adversarial examples and evaluating the purified accuracy across different lambda scheduling strategies. The results demonstrate that, across all strategies, clean accuracy remained at 30.6%, adversarial accuracy (before purification) at 16.3%, and purified accuracy around 15.6%. Additionally, the observed confidence improvement was negligible at approximately -0.000, indicating that the dynamic adaptation of lambda did not produce significant changes in the purification outcome. Experiment 2, the Lambda Strategy Ablation Study, revealed that the exponential strategy achieved an average lambda value of 0.7084 ± 0.0495 with a classifier confidence of 0.1736 ± 0.0359, while the polynomial strategy produced values of 0.6844 ± 0.0586 and 0.1735 ± 0.0360, respectively. The sigmoid strategy resulted in a higher lambda value of 0.9609 ± 0.0149 with a similar confidence level. In Experiment 3, Temporal Confidence Analysis showed that classifier confidence marginally decreased from 17.53% initially to 17.29% at the final diffusion step, while the average lambda observed during the process was 0.7087. These results suggest that although the adaptive guidance mechanism was successfully integrated, the different lambda scheduling strategies yielded nearly identical overall performance metrics. The experimental results are illustrated in the following figures:\n\nFigure 1: Comparative Purification Performance (filename: experiment1_performance_comparison.pdf). This figure summarizes the clean, adversarial, and purified accuracies across the evaluated strategies.\n\nFigure 2: Lambda Strategy Ablation Study (filename: experiment2_lambda_strategies.pdf). This figure presents the statistical data for the exponential, polynomial, and sigmoid lambda strategies, including average lambda values and classifier confidences.\n\nFigure 3: Temporal Confidence Analysis (filename: experiment3_temporal_analysis.pdf). This figure illustrates the evolution of the classifier confidence and lambda values over the reverse diffusion steps.\n\nOverall, while the adaptive classifier guidance framework in Purify-C is theoretically sound, the improvements in purification performance relative to the fixed lambda approach were minimal. The consistency in performance across different lambda strategies indicates that further work is required to enhance the influence of the confidence guidance signal.",
     "Conclusions": "In this paper, we presented Purify-C, a novel approach to adversarial purification which extends the foundational Purify++ framework[[CITATION_17]] by incorporating adaptive classifier confidence guidance into the reverse diffusion process. Purify-C addresses critical issues of information loss and label shift that can occur with aggressive denoising by dynamically adjusting the noise removal strength based on real-time classifier feedback. The method integrates a modified stochastic differential equation that balances noise removal with the need to preserve discriminative features, using a dynamic lambda parameter that is reweighted according to classifier confidence. Our experimental validation on MNIST and CIFAR-10 under diverse adversarial conditions, including a comparative performance evaluation, a lambda strategy ablation study, and a temporal analysis of classifier confidence, demonstrated comparable results across all lambda strategies, although the overall performance improvements were limited. These findings suggest that while the inclusion of adaptive guidance is promising, further refinement—such as enhanced confidence signal strength and alternative reweighting methods—is necessary to more effectively leverage classifier feedback. Future work will explore these avenues in greater depth, with the goal of achieving a more decisive improvement in adversarial robustness. Purify-C lays a solid foundation for these subsequent innovations, offering a clear pathway toward balancing the twin objectives of effective noise removal and retention of semantic, task-relevant image features."
   },
   "references": {
     "[[CITATION_1]]": {
-      "id": "https://openalex.org/W2091449379",
-      "doi": "https://doi.org/10.1109/tpami.2012.39",
       "title": "Tensor Completion for Estimating Missing Values in Visual Data",
       "authors": [
         "Ji Liu",
@@ -113,33 +111,17 @@
         "Jieping Ye"
       ],
       "year": 2012,
-      "biblio": {
-        "volume": "35",
-        "issue": "1",
-        "first_page": "208",
-        "last_page": "220"
-      },
       "journal": "IEEE Transactions on Pattern Analysis and Machine Intelligence"
     },
     "[[CITATION_2]]": {
-      "id": "https://openalex.org/W2027701333",
-      "doi": "https://doi.org/10.1007/s12555-011-0300-6",
       "title": "Model predictive control: Review of the three decades of development",
       "authors": [
         "Jay H. Lee"
       ],
       "year": 2011,
-      "biblio": {
-        "volume": "9",
-        "issue": "3",
-        "first_page": "415",
-        "last_page": "424"
-      },
       "journal": "International Journal of Control Automation and Systems"
     },
     "[[CITATION_3]]": {
-      "id": "https://openalex.org/W2167580124",
-      "doi": "https://doi.org/10.1287/opre.46.3.316",
       "title": "Branch-and-Price: Column Generation for Solving Huge Integer Programs",
       "authors": [
         "Cynthia Barnhart",
@@ -149,34 +131,18 @@
         "Pamela H. Vance"
       ],
       "year": 1998,
-      "biblio": {
-        "volume": "46",
-        "issue": "3",
-        "first_page": "316",
-        "last_page": "329"
-      },
       "journal": "Operations Research"
     },
     "[[CITATION_4]]": {
-      "id": "https://openalex.org/W1528676759",
-      "doi": "https://doi.org/10.5860/choice.46-5662",
       "title": "Multiagent systems: algorithmic, game-theoretic, and logical foundations",
       "authors": [
         "Yoav Shoham",
         "Kevin Leyton‐Brown"
       ],
       "year": 2009,
-      "biblio": {
-        "volume": "46",
-        "issue": "10",
-        "first_page": "46",
-        "last_page": "5662"
-      },
       "journal": "Choice Reviews Online"
     },
     "[[CITATION_5]]": {
-      "id": "https://openalex.org/W2115167851",
-      "doi": "https://doi.org/10.1109/tmi.2013.2265603",
       "title": "Deformable Medical Image Registration: A Survey",
       "authors": [
         "Aristeidis Sotiras",
@@ -184,18 +150,9 @@
         "Nikos Paragios"
       ],
       "year": 2013,
-      "biblio": {
-        "volume": "32",
-        "issue": "7",
-        "first_page": "1153",
-        "last_page": "1190"
-      },
       "journal": "IEEE Transactions on Medical Imaging"
     },
-    "[[CITATION_6]]": {},
     "[[CITATION_7]]": {
-      "id": "https://openalex.org/W4288039037",
-      "doi": "https://doi.org/10.1007/s10915-022-01939-z",
       "title": "Scientific Machine Learning Through Physics–Informed Neural Networks: Where we are and What's Next",
       "authors": [
         "Salvatore Cuomo",
@@ -206,17 +163,9 @@
         "Francesco Piccialli"
       ],
       "year": 2022,
-      "biblio": {
-        "volume": "92",
-        "issue": "3",
-        "first_page": null,
-        "last_page": null
-      },
       "journal": "Journal of Scientific Computing"
     },
     "[[CITATION_8]]": {
-      "id": "https://openalex.org/W639587122",
-      "doi": "https://doi.org/10.1007/s11222-015-9574-5",
       "title": "Bayesian computation: a summary of the current state, and samples backwards and forwards",
       "authors": [
         "Peter J. Green",
@@ -225,18 +174,9 @@
         "Christian P. Robert"
       ],
       "year": 2015,
-      "biblio": {
-        "volume": "25",
-        "issue": "4",
-        "first_page": "835",
-        "last_page": "862"
-      },
       "journal": "Statistics and Computing"
     },
-    "[[CITATION_9]]": {},
     "[[CITATION_10]]": {
-      "id": "https://openalex.org/W2112455692",
-      "doi": "https://doi.org/10.1109/tpami.2013.228",
       "title": "From Bits to Images: Inversion of Local Binary Descriptors",
       "authors": [
         "Emmanuel d'Angelo",
@@ -245,17 +185,9 @@
         "Pierre Vandergheynst"
       ],
       "year": 2014,
-      "biblio": {
-        "volume": "36",
-        "issue": "5",
-        "first_page": "874",
-        "last_page": "887"
-      },
       "journal": "IEEE Transactions on Pattern Analysis and Machine Intelligence"
     },
     "[[CITATION_11]]": {
-      "id": "https://openalex.org/W2112796928",
-      "doi": "https://doi.org/10.1109/5.726791",
       "title": "Gradient-based learning applied to document recognition",
       "authors": [
         "Yann LeCun",
@@ -264,17 +196,9 @@
         "Patrick Haffner"
       ],
       "year": 1998,
-      "biblio": {
-        "volume": "86",
-        "issue": "11",
-        "first_page": "2278",
-        "last_page": "2324"
-      },
       "journal": "Proceedings of the IEEE"
     },
     "[[CITATION_12]]": {
-      "id": "https://openalex.org/W3205749498",
-      "doi": "https://doi.org/10.1109/tpami.2021.3119334",
       "title": "The Emerging Trends of Multi-Label Learning",
       "authors": [
         "Weiwei Liu",
@@ -283,17 +207,9 @@
         "Ivor W. Tsang"
       ],
       "year": 2021,
-      "biblio": {
-        "volume": "44",
-        "issue": "11",
-        "first_page": "7955",
-        "last_page": "7974"
-      },
       "journal": "IEEE Transactions on Pattern Analysis and Machine Intelligence"
     },
     "[[CITATION_13]]": {
-      "id": "https://openalex.org/W3124114587",
-      "doi": "https://doi.org/10.1137/090756855",
       "title": "NESTA: A Fast and Accurate First-Order Method for Sparse Recovery",
       "authors": [
         "Stephen Becker",
@@ -301,17 +217,9 @@
         "Emmanuel J. Candès"
       ],
       "year": 2011,
-      "biblio": {
-        "volume": "4",
-        "issue": "1",
-        "first_page": "1",
-        "last_page": "39"
-      },
       "journal": "SIAM Journal on Imaging Sciences"
     },
     "[[CITATION_14]]": {
-      "id": "https://openalex.org/W3172870194",
-      "doi": "https://doi.org/10.1186/s43074-021-00040-2",
       "title": "Smart computational light microscopes (SCLMs) of smart computational imaging laboratory (SCILab)",
       "authors": [
         "Yao Fan",
@@ -328,17 +236,9 @@
         "Chao Zuo"
       ],
       "year": 2021,
-      "biblio": {
-        "volume": "2",
-        "issue": "1",
-        "first_page": null,
-        "last_page": null
-      },
       "journal": "PhotoniX"
     },
     "[[CITATION_15]]": {
-      "id": "https://openalex.org/W2063978378",
-      "doi": "https://doi.org/10.1214/009053604000000067",
       "title": "Least angle regression",
       "authors": [
         "Bradley Efron",
@@ -347,17 +247,9 @@
         "Robert Tibshirani"
       ],
       "year": 2004,
-      "biblio": {
-        "volume": "32",
-        "issue": "2",
-        "first_page": null,
-        "last_page": null
-      },
       "journal": "The Annals of Statistics"
     },
     "[[CITATION_16]]": {
-      "id": "https://openalex.org/W2985630280",
-      "doi": "https://doi.org/10.2514/1.j058291",
       "title": "Deep Learning Methods for Reynolds-Averaged Navier–Stokes Simulations of Airfoil Flows",
       "authors": [
         "Nils Thuerey",
@@ -366,17 +258,9 @@
         "Xiangyu Hu"
       ],
       "year": 2019,
-      "biblio": {
-        "volume": "58",
-        "issue": "1",
-        "first_page": "25",
-        "last_page": "36"
-      },
       "journal": "AIAA Journal"
     },
     "[[CITATION_17]]": {
-      "id": "https://openalex.org/W3047057232",
-      "doi": "https://doi.org/10.1007/s11263-020-01359-2",
       "title": "Image Matching from Handcrafted to Deep Features: A Survey",
       "authors": [
         "Jiayi Ma",
@@ -386,12 +270,6 @@
         "Junchi Yan"
       ],
       "year": 2020,
-      "biblio": {
-        "volume": "129",
-        "issue": "1",
-        "first_page": "23",
-        "last_page": "79"
-      },
       "journal": "International Journal of Computer Vision"
     }
   }
